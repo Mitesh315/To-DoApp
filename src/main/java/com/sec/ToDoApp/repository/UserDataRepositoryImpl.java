@@ -28,8 +28,13 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 	@Override
 	public void updatePassword(long userId, String password) {
 		String sql = "UPDATE user_data SET password = ? where user_id = ?";
-		jdbcTemplate.update(sql, password, userId);
-		
+		jdbcTemplate.update(sql, password, userId);	
+	}
+	
+	@Override
+	public UserData findByUsername(String username) {
+		String sql = "SELECT * FROM user_data WHERE username = ?";
+		return jdbcTemplate.queryForObject(sql, new UserDataRowMapper(), username);
 	}
 	
 	
@@ -47,6 +52,8 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		String sql = "SELECT * FROM user_data";
 		return jdbcTemplate.query(sql, new UserDataRowMapper());
 	}
+
+
 	
 	
 	
