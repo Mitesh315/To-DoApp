@@ -35,6 +35,17 @@ public class UserDataServiceImpl implements UserDataService{
 	public List<UserData> findAll() {
 		return userDataRepository.findAll();
 	}
+
+	@Override
+	public boolean validateUserdata(String username, String password) {
+		return false;
+	}
+
+	@Override
+	public boolean loginUserData(String username, String password) {
+		UserData userData = userDataRepository.findByUsername(username);
+		return userData != null && userData.getPassword().equals(password);
+	}
 	
 	
 }

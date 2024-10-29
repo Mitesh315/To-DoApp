@@ -53,6 +53,8 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		return jdbcTemplate.query(sql, new UserDataRowMapper());
 	}
 
+	
+
 
 	
 	

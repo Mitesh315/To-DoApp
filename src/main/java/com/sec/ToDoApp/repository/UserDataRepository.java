@@ -12,6 +12,7 @@ public interface UserDataRepository {
 	void updatePassword(long userId, String password);
 	UserData findByUsername(String username);
 	
+	
 //	API for Admin
 	UserData findById(long userId);
 	List<UserData> findAll();
