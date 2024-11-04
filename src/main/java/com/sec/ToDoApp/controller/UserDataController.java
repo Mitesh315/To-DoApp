@@ -1,9 +1,11 @@
+
 package com.sec.ToDoApp.controller;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +31,7 @@ public class UserDataController {
 	@Autowired
 	private JwtUtil jwtUtil;
 	
-	@PostMapping("/userdata")
+	@PostMapping("/userdata1")
 	public ResponseEntity<String> addUserData(@RequestBody UserDataRequest request) {
 		try {
 			userDataService.addUserData(request);
@@ -61,6 +63,7 @@ public class UserDataController {
 		}
 	}
 	
+//	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/userdata")
 	public ResponseEntity<List<UserData>> findAll() {
 		try {
@@ -88,4 +91,14 @@ public class UserDataController {
 		throw new RuntimeException("Unauthorized user found");
 	}
 	
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hello !!";
+	}
+	
+	@PostMapping("/hello1")
+	public String hello(@RequestBody UserDataRequest req) {
+		String str = req.getUsername();
+		return "Hello !! " + str;
+	}
 }
