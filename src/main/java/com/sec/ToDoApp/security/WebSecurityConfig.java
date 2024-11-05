@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.sec.ToDoApp.service.UserDetailsServiceImpl;
 
@@ -29,6 +30,9 @@ public class WebSecurityConfig {
 	
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
+	
+	@Autowired
+	private JwtFilter jwtFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -38,26 +42,27 @@ public class WebSecurityConfig {
 		http.httpBasic(Customizer.withDefaults());
 		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
 }
 	
-	@Bean
-	public UserDetailsService userDetailsService() {
-		
-		UserDetails user = User
-				.withDefaultPasswordEncoder()
-				.username("mahesh")
-				.password("123")
-				.roles("USER")
-				.build();
-		
-		
- 		return new InMemoryUserDetailsManager(user);
-	}
+//	@Bean
+//	public UserDetailsService userDetailsService() {
+//		
+//		UserDetails user = User
+//				.withDefaultPasswordEncoder()
+//				.username("mahesh")
+//				.password("123")
+//				.roles("USER")
+//				.build();
+//		
+//		
+// 		return new InMemoryUserDetailsManager(user);
+//	}
 	
 	@Bean
-	public AuthenticationProvider authrnticatioProvider() {
+	public AuthenticationProvider authenticatioProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
 		provider.setUserDetailsService(userDetailsService);

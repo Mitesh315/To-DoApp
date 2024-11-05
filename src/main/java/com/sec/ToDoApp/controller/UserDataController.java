@@ -83,14 +83,14 @@ public class UserDataController {
 //			return "Invalid Credentials";
 	}
 	
-	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestHeader("Authorization") String token) {
-		if(token != null) {
-			if(jwtUtil.validateToken(token))
-				return ResponseEntity.ok("User logged in successfully");
-		}
-		throw new RuntimeException("Unauthorized user found");
-	}
+//	@PostMapping("/login")
+//	public ResponseEntity<String> login(@RequestHeader("Authorization") String token) {
+//		if(token != null) {
+//			if(jwtUtil.validateToken(token))
+//				return ResponseEntity.ok("User logged in successfully");
+//		}
+//		throw new RuntimeException("Unauthorized user found");
+//	}
 	
 	@GetMapping("/hello")
 	public String hello() {
