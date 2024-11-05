@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
 
 import com.sec.ToDoApp.dto.UserDataRequest;
 import com.sec.ToDoApp.jwt_util.JwtUtil;
@@ -63,7 +64,7 @@ public class UserDataController {
 		}
 	}
 	
-//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/userdata")
 	public ResponseEntity<List<UserData>> findAll() {
 		try {
@@ -75,11 +76,11 @@ public class UserDataController {
 	}
 	
 	@PostMapping("/authenticate")
-	public String authenticate(@RequestParam String username, @RequestParam String password) {
-			if(userDataService.validateUserdata(username, password)) {
-				return jwtUtil.generateToken(username);
-			}
-			return "Invalid Credentials";
+	public String authenticate(Authentication auth) {
+//			if(userDataService.validateUserdata(username, password)) {
+				return jwtUtil.generateToken(auth.getName());
+//			}
+//			return "Invalid Credentials";
 	}
 	
 	@PostMapping("/login")

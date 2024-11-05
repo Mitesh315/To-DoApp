@@ -1,6 +1,10 @@
 package com.sec.ToDoApp.jwt_util;
 
+import java.util.Base64;
 import java.util.Date;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
@@ -11,8 +15,21 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtUtil {
 	
-	private final String SECRET_KEY = "HelloWorld";
+	private String SECRET_KEY = "";
 	private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
+	
+	
+	public JwtUtil() {
+		try {
+			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA512");
+			SecretKey sk = keyGen.generateKey();
+			SECRET_KEY = Base64.getEncoder().encodeToString(sk.getEncoded());
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
 
 	public String generateToken(String username) {
 		return Jwts.builder()
