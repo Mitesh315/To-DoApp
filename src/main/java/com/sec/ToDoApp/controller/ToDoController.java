@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +26,11 @@ public class ToDoController {
 	@Autowired
 	private ToDoService toDoService;
 	
-	@PostMapping("/todo")
+	@PostMapping("/add-todo")
 	public ResponseEntity<String> addToDo(@RequestBody ToDoRequest request) {
 		try {
-			toDoService.addToDo(request);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			toDoService.addToDo(request, username);
 			return ResponseEntity.ok("ToDo added successfully");
 		}
 		catch (Exception e) {
@@ -36,7 +38,7 @@ public class ToDoController {
 		}
 	}
 	
-	@GetMapping("/todo/{userId}/{id}")
+	@GetMapping("/find-todo-by-id")
 	public Optional<ToDo> findById(@PathVariable long userId, @PathVariable long id) {
 		try {
 			return toDoService.findById(userId, id);
@@ -46,7 +48,7 @@ public class ToDoController {
 		}
 	}
 	
-	@GetMapping("/todo/{userId}")
+	@GetMapping("/find-all-todo")
 	public List<ToDo> findAll(@PathVariable long userId) {
 		try {
 			return toDoService.findAll(userId);
@@ -56,7 +58,7 @@ public class ToDoController {
 		}
 	}
 	
-	@PutMapping("/todo")
+	@PutMapping("/update-todo")
 	public ResponseEntity<String> updateToDo(@RequestBody ToDoRequest request) {
 		try {
 			toDoService.updateToDo(request);
@@ -67,7 +69,7 @@ public class ToDoController {
 		}
 	}
 	
-	@PutMapping("/todo/{id}")
+	@PutMapping("/update-todo-status")
 	public ResponseEntity<String> updateStatus(@PathVariable long id) {
 		try {
 			toDoService.updateStatus(id);
@@ -78,7 +80,7 @@ public class ToDoController {
 		}
 	}
 	
-	@DeleteMapping("/todo/{id}")
+	@DeleteMapping("/delete-todo")
 	public ResponseEntity<String> deleteToDo(@PathVariable long id) {
 		try {
 			toDoService.deleteToDo(id);
@@ -88,4 +90,6 @@ public class ToDoController {
 			return ResponseEntity.badRequest().body("Failed to delete");
 		}
 	}
+	
+	
 }

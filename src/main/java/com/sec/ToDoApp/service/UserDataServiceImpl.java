@@ -3,10 +3,14 @@ package com.sec.ToDoApp.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sec.ToDoApp.dto.UserDataRequest;
+import com.sec.ToDoApp.jwt_util.JwtUtil;
 import com.sec.ToDoApp.model.UserData;
 import com.sec.ToDoApp.repository.UserDataRepository;
 
@@ -16,8 +20,14 @@ public class UserDataServiceImpl implements UserDataService{
 	@Autowired
 	private UserDataRepository userDataRepository;
 	
+	@Autowired
+	private JwtUtil jwtUtil;
+	
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+	@Autowired
+	AuthenticationManager authManager;
+	
 	@Override
 	public void addUserData(UserDataRequest request) {
 		request.setPassword(encoder.encode(request.getPassword()));
@@ -25,9 +35,9 @@ public class UserDataServiceImpl implements UserDataService{
 	}
 
 	@Override
-	public void updatePassword(long userId, String password) {
+	public void updatePassword(String username, String password) {
 		password = encoder.encode(password);
-		userDataRepository.updatePassword(userId, password);
+		userDataRepository.updatePassword(username, password);
 		
 	}
 
@@ -51,6 +61,22 @@ public class UserDataServiceImpl implements UserDataService{
 	public boolean loginUserData(String username, String password) {
 		UserData userData = userDataRepository.findByUsername(username);
 		return userData != null && userData.getPassword().equals(password);
+	}
+
+	@Override
+	public String verify(UserDataRequest req) {
+		Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(),req.getPassword()));
+		
+		if(authentication.isAuthenticated()) {
+			return jwtUtil.generateToken(req.getUsername());
+		}
+		
+		return "Failed to Login";
+	}
+
+	@Override
+	public UserData getUser(String username) {
+		return userDataRepository.findByUsername(username);
 	}
 	
 	

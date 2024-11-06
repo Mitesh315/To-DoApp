@@ -6,16 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.Authentication;
 
 import com.sec.ToDoApp.dto.UserDataRequest;
 import com.sec.ToDoApp.jwt_util.JwtUtil;
@@ -32,7 +32,7 @@ public class UserDataController {
 	@Autowired
 	private JwtUtil jwtUtil;
 	
-	@PostMapping("/userdata1")
+	@PostMapping("/create")
 	public ResponseEntity<String> addUserData(@RequestBody UserDataRequest request) {
 		try {
 			userDataService.addUserData(request);
@@ -43,10 +43,11 @@ public class UserDataController {
 		}
 	}
 	
-	@PutMapping("/userdata/{userId}")
-	public ResponseEntity<String> updatePassword(@PathVariable long userId, @RequestParam String password) {
+	@PutMapping("/update-password")
+	public ResponseEntity<String> updatePassword(@RequestBody UserDataRequest req) {
 		try {
-			userDataService.updatePassword(userId, password);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			userDataService.updatePassword(username, req.getPassword());
 			return ResponseEntity.ok("Password updated");
 		}
 		catch (Exception e) {
@@ -64,42 +65,39 @@ public class UserDataController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/userdata")
-	public ResponseEntity<List<UserData>> findAll() {
-		try {
-			return ResponseEntity.ok(userDataService.findAll());
-		}
-		catch (Exception e) {
-			return ResponseEntity.badRequest().body(null);
-		}
+	@PostMapping("/userdata")
+	public UserData getUser() {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		return userDataService.getUser(username);
 	}
 	
-	@PostMapping("/authenticate")
-	public String authenticate(Authentication auth) {
-//			if(userDataService.validateUserdata(username, password)) {
-				return jwtUtil.generateToken(auth.getName());
-//			}
-//			return "Invalid Credentials";
-	}
-	
-//	@PostMapping("/login")
-//	public ResponseEntity<String> login(@RequestHeader("Authorization") String token) {
-//		if(token != null) {
-//			if(jwtUtil.validateToken(token))
-//				return ResponseEntity.ok("User logged in successfully");
+//	@PreAuthorize("hasRole('ADMIN')")
+//	@GetMapping("/userdata")
+//	public ResponseEntity<List<UserData>> findAll() {
+//		try {
+//			return ResponseEntity.ok(userDataService.findAll());
 //		}
-//		throw new RuntimeException("Unauthorized user found");
+//		catch (Exception e) {
+//			return ResponseEntity.badRequest().body(null);
+//		}
 //	}
 	
-	@GetMapping("/hello")
-	public String hello() {
-		return "Hello !!";
-	}
+//	@PostMapping("/authenticate")
+//	public String authenticate(Authentication auth) {
+//			if(userDataService.validateUserdata(username, password)) {
+//				return jwtUtil.generateToken(auth.getName());
+//			}
+//			return "Invalid Credentials";
+//	}
 	
-	@PostMapping("/hello1")
-	public String hello(@RequestBody UserDataRequest req) {
-		String str = req.getUsername();
-		return "Hello !! " + str;
+	
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody UserDataRequest req) {
+		try {
+			return ResponseEntity.ok(userDataService.verify(req));
+		}
+		catch(Exception e) {
+			return ResponseEntity.badRequest().body("Unauthorized user found");
+		}
 	}
 }

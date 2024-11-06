@@ -8,7 +8,7 @@ import com.sec.ToDoApp.model.ToDo;
 
 public interface ToDoService {
 
-	void addToDo(ToDoRequest request);
+	void addToDo(ToDoRequest request, String username);
 	Optional<ToDo> findById(long userId, long id);
 	List<ToDo> findAll(long user_id);
 	void updateStatus(long id);

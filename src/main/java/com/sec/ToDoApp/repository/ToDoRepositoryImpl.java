@@ -18,9 +18,9 @@ public class ToDoRepositoryImpl implements ToDoRepository{
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public void addToDo(ToDoRequest request) {
+	public void addToDo(ToDoRequest request, long id) {
 		String sql = "INSERT INTO todo (title, description, user_id) VALUES (?, ?, ?)";
-		jdbcTemplate.update(sql, request.getTitle(), request.getDescription(), request.getUserId());
+		jdbcTemplate.update(sql, request.getTitle(), request.getDescription(), id);
 	}
 
 	@Override

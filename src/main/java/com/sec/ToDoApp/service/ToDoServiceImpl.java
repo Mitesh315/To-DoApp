@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service;
 import com.sec.ToDoApp.dto.ToDoRequest;
 import com.sec.ToDoApp.model.ToDo;
 import com.sec.ToDoApp.repository.ToDoRepository;
+import com.sec.ToDoApp.repository.UserDataRepository;
 
 @Service
 public class ToDoServiceImpl implements ToDoService{
 
 	@Autowired
 	private ToDoRepository toDoRepository;
+	
+	@Autowired
+	private UserDataRepository userDataRepository;
 
 	@Override
-	public void addToDo(ToDoRequest request) {
-		toDoRepository.addToDo(request);
+	public void addToDo(ToDoRequest request, String username) {
+		long id = userDataRepository.findIdByUsername(username);
+		toDoRepository.addToDo(request, id);
 	}
 
 	@Override

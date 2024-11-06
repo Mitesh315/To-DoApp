@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -37,7 +36,6 @@ public class JwtUtil {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	public String generateToken(String username) {
 		Map<String, Object> claims = new HashMap<>();
 		return Jwts.builder()
@@ -49,30 +47,9 @@ public class JwtUtil {
 				.and()
 				.signWith(getKey())
 				.compact();
-		
-//				.setSubject(username)
-//				.setIssuedAt(new Date())
-//				.setExpiration()
-//				.signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-//				.compact();
+
 	}
 	
-//	public boolean validateToken(String token) {
-//		try {
-//			Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-//			return true;
-//		}
-//		catch (Exception e) {
-//			return false;
-//		}
-//	}
-	
-//	@SuppressWarnings("deprecation")
-//	public String getUsernameFromToken(String token) {
-//		Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-//		return claims.getSubject();
-//	}
-
 	private SecretKey getKey() {
 		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
 		return Keys.hmacShaKeyFor(keyBytes);
