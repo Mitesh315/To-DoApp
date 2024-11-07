@@ -26,8 +26,8 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 	
 	@Override
 	public void addUserData(UserDataRequest request) {
-		String sql = "INSERT INTO user_data (username, password, role) VALUES (?, ?, ?)";
-		jdbcTemplate.update(sql, request.getUsername(), request.getPassword(), request.getRole());
+		String sql = "INSERT INTO user_data (username, password, role) VALUES (?, ?, 'USER')";
+		jdbcTemplate.update(sql, request.getUsername(), request.getPassword());
 	}
 
 	@Override
@@ -52,11 +52,6 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		return jdbcTemplate.queryForObject(sql, new UserDataRowMapper(), userId);
 	}
 
-	@Override
-	public List<UserData> findAll() {
-		String sql = "SELECT * FROM user_data";
-		return jdbcTemplate.query(sql, new UserDataRowMapper());
-	}
 
 	@Override
 	public long findIdByUsername(String username) {
@@ -67,6 +62,25 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		params.addValue("username", username);
 		
 		return namedParameterJdbcTemplate.queryForObject(sql, params, Long.class);
+	}
+
+	@Override
+	public void deleteUserData(String username) {
+		String sql = "DELETE FROM user_data WHERE username = ? AND role = 'USER' ";
+		jdbcTemplate.update(sql, username);
+		
+	}
+
+	@Override
+	public void addAdminData(UserDataRequest request) {
+		String sql = "INSERT INTO user_data (username, password, role) VALUES (?, ?, 'ADMIN')";
+		jdbcTemplate.update(sql, request.getUsername(), request.getPassword());
+	}
+
+	@Override
+	public List<UserData> getAllUser() {
+		String sql = "SELECT * FROM user_data WHERE role = 'USER'";
+		return jdbcTemplate.query(sql, new UserDataRowMapper());
 	}
 
 	

@@ -11,12 +11,14 @@ public interface UserDataRepository {
 	void addUserData(UserDataRequest request);
 	void updatePassword(String username, String password);
 	UserData findByUsername(String username);
+	void deleteUserData(String username);
 	
 	
 //	API for Admin
 	UserData findById(long userId);
-	List<UserData> findAll();
 	long findIdByUsername(String username);
+	void addAdminData(UserDataRequest request);
+	List<UserData> getAllUser();
 	
 
 }

@@ -34,7 +34,10 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		
 		http.authorizeHttpRequests(request -> 
-		request.requestMatchers("/todoApp/login","/todoApp/create").permitAll().anyRequest().authenticated());
+		request.requestMatchers("/todoApp/login","/todoApp/create-user","/todoApp/create-admin")
+		.permitAll()
+		.requestMatchers("/todoApp/find-all-todos").hasRole("ADMIN")
+		.anyRequest().authenticated());
 		http.httpBasic(Customizer.withDefaults());
 		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

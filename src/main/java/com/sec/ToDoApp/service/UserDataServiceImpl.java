@@ -47,11 +47,6 @@ public class UserDataServiceImpl implements UserDataService{
 	}
 
 	@Override
-	public List<UserData> findAll() {
-		return userDataRepository.findAll();
-	}
-
-	@Override
 	public boolean validateUserdata(String username, String password) {
 		UserData user = userDataRepository.findByUsername(username);
 		return user != null && user.getPassword().equals(encoder.encode(password));
@@ -77,6 +72,24 @@ public class UserDataServiceImpl implements UserDataService{
 	@Override
 	public UserData getUser(String username) {
 		return userDataRepository.findByUsername(username);
+	}
+
+	@Override
+	public void deleteUserData(String username) {
+		userDataRepository.deleteUserData(username);
+		
+	}
+
+	@Override
+	public void addAdminData(UserDataRequest request) {
+		request.setPassword(encoder.encode(request.getPassword()));
+		userDataRepository.addAdminData(request);
+		
+	}
+
+	@Override
+	public List<UserData> getAllUser() {
+		return userDataRepository.getAllUser();
 	}
 	
 	

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,48 +29,75 @@ public class UserDataController {
 
 	@Autowired
 	private UserDataService userDataService;
-	
+
 	@Autowired
 	private JwtUtil jwtUtil;
+
 	
-	@PostMapping("/create")
+	
+	// Create New User
+
+	@PostMapping("/create-user")
 	public ResponseEntity<String> addUserData(@RequestBody UserDataRequest request) {
 		try {
 			userDataService.addUserData(request);
 			return ResponseEntity.ok("User Created");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	// Update Password
+
 	@PutMapping("/update-password")
 	public ResponseEntity<String> updatePassword(@RequestBody UserDataRequest req) {
 		try {
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			userDataService.updatePassword(username, req.getPassword());
 			return ResponseEntity.ok("Password updated");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Failed to update password");
 		}
 	}
-	
-	@GetMapping("/userdata/{userId}")
-	public ResponseEntity<UserData> findById(@PathVariable long userId) {
-		try {
-			return ResponseEntity.ok(userDataService.findById(userId));
-		}
-		catch (Exception e) {
-			return ResponseEntity.badRequest().body(null);
-		}
-	}
-	
+
+
+	// Get User data by giving token
+
 	@PostMapping("/userdata")
 	public UserData getUser() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return userDataService.getUser(username);
 	}
+
+	
+	// Login User and return JWT token
+	
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody UserDataRequest req) {
+		try {
+			return ResponseEntity.ok(userDataService.verify(req));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Unauthorized user found");
+		}
+	}
+	
+	
+	// Delete user by giving token
+	
+	@DeleteMapping("/delete-user")
+	public ResponseEntity<String> deleteUserData() {
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			userDataService.deleteUserData(username);
+			return ResponseEntity.ok("User Deleted Successfully");
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	
 	
 //	@PreAuthorize("hasRole('ADMIN')")
 //	@GetMapping("/userdata")
@@ -81,7 +109,7 @@ public class UserDataController {
 //			return ResponseEntity.badRequest().body(null);
 //		}
 //	}
-	
+
 //	@PostMapping("/authenticate")
 //	public String authenticate(Authentication auth) {
 //			if(userDataService.validateUserdata(username, password)) {
@@ -89,15 +117,50 @@ public class UserDataController {
 //			}
 //			return "Invalid Credentials";
 //	}
+
 	
 	
-	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody UserDataRequest req) {
+	
+	
+//	ADMIN API's
+	
+	
+	// Get user data by id
+	
+	@GetMapping("/userdata/{userId}")
+	public ResponseEntity<UserData> findById(@PathVariable long userId) {
 		try {
-			return ResponseEntity.ok(userDataService.verify(req));
-		}
-		catch(Exception e) {
-			return ResponseEntity.badRequest().body("Unauthorized user found");
+			return ResponseEntity.ok(userDataService.findById(userId));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(null);
 		}
 	}
+	
+	
+	// Create Admin
+	
+	
+	@PostMapping("/create-admin")
+	public ResponseEntity<String> addAdminData(@RequestBody UserDataRequest request) {
+		try {
+			userDataService.addAdminData(request);
+			return ResponseEntity.ok("Admin account Created");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/get-all-user")
+	public ResponseEntity<List<UserData>> getAllUser() {
+		try {
+			return ResponseEntity.ok(userDataService.getAllUser());
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	
 }

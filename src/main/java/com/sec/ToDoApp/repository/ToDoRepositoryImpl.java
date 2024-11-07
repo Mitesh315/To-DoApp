@@ -36,22 +36,27 @@ public class ToDoRepositoryImpl implements ToDoRepository{
 	}
 	
 	@Override
-	public void updateToDo(ToDoRequest request) {
-		String sql = "UPDATE todo SET title = ?, description = ? WHERE id = ?";
-		jdbcTemplate.update(sql, request.getTitle(), request.getDescription(), request.getId());
+	public void updateToDo(ToDoRequest request, long userId) {
+		String sql = "UPDATE todo SET title = ?, description = ? WHERE user_id = ? AND id = ?";
+		jdbcTemplate.update(sql, request.getTitle(), request.getDescription(), userId, request.getId());
 	}
 
 	@Override
-	public void deleteToDo(long id) {
-		String sql = "DELETE FROM todo WHERE id = ?";
-		jdbcTemplate.update(sql, id);
-		
+	public void deleteToDo(long id, long userId) {
+		String sql = "DELETE FROM todo WHERE user_id = ? AND id = ?";
+		jdbcTemplate.update(sql, userId, id);
 	}
 
 	@Override
-	public void updateStatus(long id) {
-		String sql = "UPDATE todo SET status = 'COMPLETED' WHERE id = ?";
-		jdbcTemplate.update(sql, id);
+	public void updateStatus(long id, long userId) {
+		String sql = "UPDATE todo SET status = 'COMPLETED' WHERE user_id = ? AND id = ?";
+		jdbcTemplate.update(sql, userId, id);
+	}
+
+	@Override
+	public List<ToDo> findAllTodos() {
+		String sql = "SELECT * FROM todo";
+		return jdbcTemplate.query(sql, new ToDoRowMapper());
 	}
 	
 	

@@ -9,11 +9,12 @@ import com.sec.ToDoApp.model.ToDo;
 public interface ToDoRepository {
 	
 	void addToDo(ToDoRequest request, long id);
-	List<ToDo> findAll(long user_id);
+	List<ToDo> findAll(long userId);
 	Optional<ToDo> findById(long userId, long id);
-	void updateToDo(ToDoRequest request);
-	void updateStatus(long id);
-	void deleteToDo(long id);
+	void updateToDo(ToDoRequest request, long userId);
+	void updateStatus(long id, long userId);
+	void deleteToDo(long id, long userId);
+	List<ToDo> findAllTodos();
 	
 
 }

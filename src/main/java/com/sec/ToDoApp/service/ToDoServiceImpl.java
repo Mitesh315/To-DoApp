@@ -23,33 +23,43 @@ public class ToDoServiceImpl implements ToDoService{
 
 	@Override
 	public void addToDo(ToDoRequest request, String username) {
-		long id = userDataRepository.findIdByUsername(username);
-		toDoRepository.addToDo(request, id);
+		long userId = userDataRepository.findIdByUsername(username);
+		toDoRepository.addToDo(request, userId);
 	}
 
 	@Override
-	public Optional<ToDo> findById(long userId, long id) {
+	public Optional<ToDo> findById(String username, long id) {
+		long userId = userDataRepository.findIdByUsername(username);
 		return toDoRepository.findById(userId, id);
 	}
 
 	@Override
-	public void updateStatus(long id) {
-		toDoRepository.updateStatus(id);
+	public void updateStatus(long id, String username) {
+		long userId = userDataRepository.findIdByUsername(username);
+		toDoRepository.updateStatus(id, userId);
 	}
 
 	@Override
-	public List<ToDo> findAll(long user_id) {
-		return toDoRepository.findAll(user_id);
+	public List<ToDo> findAll(String username) {
+		long userId = userDataRepository.findIdByUsername(username);
+		return toDoRepository.findAll(userId);
 	}
 
 	@Override
-	public void updateToDo(ToDoRequest request) {
-		toDoRepository.updateToDo(request);
+	public void updateToDo(ToDoRequest request, String username) {
+		long userId = userDataRepository.findIdByUsername(username);
+		toDoRepository.updateToDo(request, userId);
 	}
 
 	@Override
-	public void deleteToDo(long id) {
-		toDoRepository.deleteToDo(id);
+	public void deleteToDo(long id, String username) {
+		long userId = userDataRepository.findIdByUsername(username);
+		toDoRepository.deleteToDo(id, userId);
 		
+	}
+
+	@Override
+	public List<ToDo> findAllTodos() {
+		return toDoRepository.findAllTodos();
 	}
 }

@@ -10,11 +10,13 @@ public interface UserDataService {
 	void addUserData(UserDataRequest request);
 	void updatePassword(String username, String password);
 	boolean loginUserData(String username, String password);
+	void deleteUserData(String username); 
 	
+	void addAdminData(UserDataRequest request);
 	UserData findById(long userId);
-	List<UserData> findAll();
 	boolean validateUserdata(String username, String password);
 	String verify(UserDataRequest req);
 	UserData getUser(String username);
+	List<UserData> getAllUser();
 
 }

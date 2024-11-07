@@ -39,9 +39,10 @@ public class ToDoController {
 	}
 	
 	@GetMapping("/find-todo-by-id")
-	public Optional<ToDo> findById(@PathVariable long userId, @PathVariable long id) {
+	public Optional<ToDo> findById(@RequestBody ToDoRequest request) {
 		try {
-			return toDoService.findById(userId, id);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return toDoService.findById(username, request.getId());
 		}
 		catch (Exception e) {
 			return null;
@@ -49,9 +50,10 @@ public class ToDoController {
 	}
 	
 	@GetMapping("/find-all-todo")
-	public List<ToDo> findAll(@PathVariable long userId) {
+	public List<ToDo> findAll() {
 		try {
-			return toDoService.findAll(userId);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return toDoService.findAll(username);
 		}
 		catch(Exception e) {
 			return null;
@@ -61,7 +63,8 @@ public class ToDoController {
 	@PutMapping("/update-todo")
 	public ResponseEntity<String> updateToDo(@RequestBody ToDoRequest request) {
 		try {
-			toDoService.updateToDo(request);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			toDoService.updateToDo(request, username);
 			return ResponseEntity.ok("ToDo Updated");
 		}
 		catch (Exception e) {
@@ -70,9 +73,10 @@ public class ToDoController {
 	}
 	
 	@PutMapping("/update-todo-status")
-	public ResponseEntity<String> updateStatus(@PathVariable long id) {
+	public ResponseEntity<String> updateStatus(@RequestBody ToDoRequest req) {
 		try {
-			toDoService.updateStatus(id);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			toDoService.updateStatus(req.getId(), username);
 			return ResponseEntity.ok("Status Updated");
 		}
 		catch (Exception e) {
@@ -81,13 +85,25 @@ public class ToDoController {
 	}
 	
 	@DeleteMapping("/delete-todo")
-	public ResponseEntity<String> deleteToDo(@PathVariable long id) {
+	public ResponseEntity<String> deleteToDo(@RequestBody ToDoRequest req) {
 		try {
-			toDoService.deleteToDo(id);
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			toDoService.deleteToDo(req.getId(), username);
 			return ResponseEntity.ok("To-Do deleted");
 		}
 		catch (Exception e) {
 			return ResponseEntity.badRequest().body("Failed to delete");
+		}
+	}
+	
+	
+	@GetMapping("/find-all-todos")
+	public List<ToDo> findAllTodos() {
+		try {
+			return toDoService.findAllTodos();
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
