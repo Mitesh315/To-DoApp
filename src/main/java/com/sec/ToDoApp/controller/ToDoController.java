@@ -3,6 +3,8 @@ package com.sec.ToDoApp.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sec.ToDoApp.dto.ToDoRequest;
@@ -107,5 +110,28 @@ public class ToDoController {
 		}
 	}
 	
+	@DeleteMapping("/delete-todo-by-id")
+	public ResponseEntity<String> deleteToDoById(@RequestBody ToDoRequest req)
+	{
+		try {
+			toDoService.deleteToDoById(req.getId());
+			return ResponseEntity.ok("TODO DELETED");
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
+	@GetMapping("/find-all-paginated/{page}/{limit}")
+	public List<ToDo> findAllPaginatedList(@PathVariable int page, @PathVariable int limit) {
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return toDoService.getPaginatedList(page, limit, username);
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 }

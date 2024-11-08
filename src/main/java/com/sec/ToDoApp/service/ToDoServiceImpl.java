@@ -13,11 +13,11 @@ import com.sec.ToDoApp.repository.ToDoRepository;
 import com.sec.ToDoApp.repository.UserDataRepository;
 
 @Service
-public class ToDoServiceImpl implements ToDoService{
+public class ToDoServiceImpl implements ToDoService {
 
 	@Autowired
 	private ToDoRepository toDoRepository;
-	
+
 	@Autowired
 	private UserDataRepository userDataRepository;
 
@@ -55,11 +55,22 @@ public class ToDoServiceImpl implements ToDoService{
 	public void deleteToDo(long id, String username) {
 		long userId = userDataRepository.findIdByUsername(username);
 		toDoRepository.deleteToDo(id, userId);
-		
+
 	}
 
 	@Override
 	public List<ToDo> findAllTodos() {
 		return toDoRepository.findAllTodos();
+	}
+
+	@Override
+	public void deleteToDoById(long id) {
+		toDoRepository.deleteToDoById(id);
+	}
+
+	@Override
+	public List<ToDo> getPaginatedList(int page, int limit, String username) {
+		long userId = userDataRepository.findIdByUsername(username);
+		return toDoRepository.getPaginatedList(page, limit, userId);
 	}
 }

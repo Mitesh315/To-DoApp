@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sec.ToDoApp.dto.UserDataRequest;
 import com.sec.ToDoApp.model.UserData;
@@ -64,10 +65,15 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		return namedParameterJdbcTemplate.queryForObject(sql, params, Long.class);
 	}
 
+	@Transactional
 	@Override
-	public void deleteUserData(String username) {
-		String sql = "DELETE FROM user_data WHERE username = ? AND role = 'USER' ";
-		jdbcTemplate.update(sql, username);
+	public void deleteUserData(long userId) {
+		
+		String sql1 = "DELETE FROM todo WHERE user_id = ?";
+		jdbcTemplate.update(sql1, userId);
+		
+		String sql2 = "DELETE FROM user_data WHERE user_id = ? AND role = 'USER' ";
+		jdbcTemplate.update(sql2, userId);
 		
 	}
 
@@ -83,10 +89,6 @@ public class UserDataRepositoryImpl implements UserDataRepository{
 		return jdbcTemplate.query(sql, new UserDataRowMapper());
 	}
 
-	
-
-
-	
-	
+		
 	
 }

@@ -36,7 +36,7 @@ public class WebSecurityConfig {
 		http.authorizeHttpRequests(request -> 
 		request.requestMatchers("/todoApp/login","/todoApp/create-user","/todoApp/create-admin")
 		.permitAll()
-		.requestMatchers("/todoApp/find-all-todos").hasRole("ADMIN")
+		.requestMatchers("/todoApp/find-all-todos","/todoApp/delete-todo-by-id").hasRole("ADMIN")
 		.anyRequest().authenticated());
 		http.httpBasic(Customizer.withDefaults());
 		http.csrf(csrf -> csrf.disable());

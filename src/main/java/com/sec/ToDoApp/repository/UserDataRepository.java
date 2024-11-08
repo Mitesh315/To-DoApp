@@ -11,7 +11,7 @@ public interface UserDataRepository {
 	void addUserData(UserDataRequest request);
 	void updatePassword(String username, String password);
 	UserData findByUsername(String username);
-	void deleteUserData(String username);
+	void deleteUserData(long userId);
 	
 	
 //	API for Admin

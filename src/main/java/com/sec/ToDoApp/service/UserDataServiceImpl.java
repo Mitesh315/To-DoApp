@@ -76,7 +76,8 @@ public class UserDataServiceImpl implements UserDataService{
 
 	@Override
 	public void deleteUserData(String username) {
-		userDataRepository.deleteUserData(username);
+		long userId = userDataRepository.findIdByUsername(username);
+		userDataRepository.deleteUserData(userId);
 		
 	}
 
