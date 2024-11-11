@@ -40,10 +40,21 @@ public class UserDataController {
 	@PostMapping("/create-user")
 	public ResponseEntity<String> addUserData(@RequestBody UserDataRequest request) {
 		try {
+			
+			if(request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+				throw new IllegalArgumentException("Username cannot be null or Empty");
+			}
+			
+			if(request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+				throw new IllegalArgumentException("Passowrd cannot be null or Empty");
+			}
+			
 			userDataService.addUserData(request);
 			return ResponseEntity.ok("User Created");
+			
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("Internal Server Error");
 		}
 	}
 
@@ -52,11 +63,18 @@ public class UserDataController {
 	@PutMapping("/update-password")
 	public ResponseEntity<String> updatePassword(@RequestBody UserDataRequest req) {
 		try {
+			
+			if(req.getPassword() == null || req.getPassword().trim().isEmpty()) {
+				throw new IllegalArgumentException("Passowrd cannot be null or Empty");
+			}
+			
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			userDataService.updatePassword(username, req.getPassword());
 			return ResponseEntity.ok("Password updated");
+			
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("Failed to update password");
+			e.printStackTrace();
+			throw new RuntimeException("Failed to update password");
 		}
 	}
 
@@ -65,8 +83,17 @@ public class UserDataController {
 
 	@PostMapping("/userdata")
 	public UserData getUser() {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return userDataService.getUser(username);
+		
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return userDataService.getUser(username);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Info not found");
+		}
+		
+		
 	}
 
 	
@@ -75,9 +102,20 @@ public class UserDataController {
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody UserDataRequest req) {
 		try {
+			
+			if(req.getUsername() == null || req.getUsername().trim().isEmpty()) {
+				throw new IllegalArgumentException("Username cannot be null or Empty");
+			}
+			
+			if(req.getPassword() == null || req.getPassword().trim().isEmpty()) {
+				throw new IllegalArgumentException("Passowrd cannot be null or Empty");
+			}
+			
 			return ResponseEntity.ok(userDataService.verify(req));
+			
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("Unauthorized user found");
+			e.printStackTrace();
+			throw new RuntimeException("Unauthorized user found");
 		}
 	}
 	
@@ -92,7 +130,8 @@ public class UserDataController {
 			return ResponseEntity.ok("User Deleted Successfully");
 		}
 		catch(Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("Error occured while deleting user");
 		}
 	}
 	
@@ -119,9 +158,6 @@ public class UserDataController {
 //	}
 
 	
-	
-	
-	
 //	ADMIN API's
 	
 	
@@ -132,7 +168,8 @@ public class UserDataController {
 		try {
 			return ResponseEntity.ok(userDataService.findById(userId));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(null);
+			e.printStackTrace();
+			throw new RuntimeException("User data not found");			
 		}
 	}
 	
@@ -143,10 +180,21 @@ public class UserDataController {
 	@PostMapping("/create-admin")
 	public ResponseEntity<String> addAdminData(@RequestBody UserDataRequest request) {
 		try {
+			
+			if(request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+				throw new IllegalArgumentException("Username cannot be null or Empty");
+			}
+			
+			if(request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+				throw new IllegalArgumentException("Passowrd cannot be null or Empty");
+			}
+			
 			userDataService.addAdminData(request);
 			return ResponseEntity.ok("Admin account Created");
+			
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("Error occured while creating account");
 		}
 	}
 	
@@ -157,10 +205,10 @@ public class UserDataController {
 			return ResponseEntity.ok(userDataService.getAllUser());
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("List not found");
 		}
 	}
 	
-	
-	
+
 }

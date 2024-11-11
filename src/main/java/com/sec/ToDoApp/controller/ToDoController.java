@@ -32,23 +32,35 @@ public class ToDoController {
 	@PostMapping("/add-todo")
 	public ResponseEntity<String> addToDo(@RequestBody ToDoRequest request) {
 		try {
+			
+			if(request.getTitle() == null || request.getTitle().trim().isEmpty()) {
+				throw new IllegalArgumentException("Title of To-Do cannot be null or Empty");
+			}
+			
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			toDoService.addToDo(request, username);
 			return ResponseEntity.ok("ToDo added successfully");
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("Error occured while creating To-Do");
 		}
 	}
 	
 	@GetMapping("/find-todo-by-id")
 	public Optional<ToDo> findById(@RequestBody ToDoRequest request) {
 		try {
+			
+			if(request.getId() == 0 || request.getTitle().trim().isEmpty()) {
+				throw new IllegalArgumentException("Title of To-Do cannot be null or Empty");
+			}
+			
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			return toDoService.findById(username, request.getId());
 		}
 		catch (Exception e) {
-			return null;
+			e.printStackTrace();
+			throw new RuntimeException("To-Do not found");
 		}
 	}
 	
@@ -59,7 +71,8 @@ public class ToDoController {
 			return toDoService.findAll(username);
 		}
 		catch(Exception e) {
-			return null;
+			e.printStackTrace();
+			throw new RuntimeException("To-Do list not found");
 		}
 	}
 	
@@ -71,7 +84,8 @@ public class ToDoController {
 			return ResponseEntity.ok("ToDo Updated");
 		}
 		catch (Exception e) {
-			return ResponseEntity.badRequest().body("Failed to Update ToDo");
+			e.printStackTrace();
+			throw new RuntimeException("Error occurred while updating To-Do");
 		}
 	}
 	
@@ -83,7 +97,8 @@ public class ToDoController {
 			return ResponseEntity.ok("Status Updated");
 		}
 		catch (Exception e) {
-			return ResponseEntity.badRequest().body("To-Do not Found");
+			e.printStackTrace();
+			throw new RuntimeException("To-Do not Found");
 		}
 	}
 	
@@ -95,7 +110,8 @@ public class ToDoController {
 			return ResponseEntity.ok("To-Do deleted");
 		}
 		catch (Exception e) {
-			return ResponseEntity.badRequest().body("Failed to delete");
+			e.printStackTrace();
+			throw new RuntimeException("Failed to delete");
 		}
 	}
 	
@@ -106,7 +122,8 @@ public class ToDoController {
 			return toDoService.findAllTodos();
 		}
 		catch(Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("To-Do list not found");
 		}
 	}
 	
@@ -115,10 +132,11 @@ public class ToDoController {
 	{
 		try {
 			toDoService.deleteToDoById(req.getId());
-			return ResponseEntity.ok("TODO DELETED");
+			return ResponseEntity.ok("To-Do Deleted");
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("Error occurred while deleting");
 		}
 		
 	}
@@ -130,8 +148,11 @@ public class ToDoController {
 			return toDoService.getPaginatedList(page, limit, username);
 		}
 		catch(Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			throw new RuntimeException("No List Found");
 		}
 	}
+	
+	
 	
 }
